@@ -1,0 +1,6 @@
+{
+  "name": "ScholarPath USA",
+  "description": "Find Fully Funded and Partial Scholarships at U.S. Universities. Search, filter, and compare merit, need-based, STEM, and graduate funding.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

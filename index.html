@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ScholarPath USA – Fully Funded &amp; Partial U.S. Scholarships</title>
+    <meta
+      name="description"
+      content="Find fully funded and partial scholarships at U.S. universities. Search, filter, and compare merit, need-based, STEM, and graduate funding for 2026."
+    />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="ScholarPath USA" />
+    <meta property="og:title" content="ScholarPath USA – Fully Funded &amp; Partial U.S. Scholarships" />
+    <meta
+      property="og:description"
+      content="Find fully funded and partial scholarships at U.S. universities. Search, filter, and compare merit, need-based, STEM, and graduate funding for 2026."
+    />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="ScholarPath USA – Fully Funded &amp; Partial U.S. Scholarships" />
+    <meta
+      name="twitter:description"
+      content="Find fully funded and partial scholarships at U.S. universities. Search, filter, and compare merit, need-based, STEM, and graduate funding."
+    />
+
+    <!-- Typography: Playfair Display (Headings), Poppins (Body), JetBrains Mono (Tabular Numerals) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Poppins:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Google Consent Mode v2 & GA4 Placeholder -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag('consent', 'default', {
+        ad_storage: 'denied',
+        ad_user_data: 'denied',
+        ad_personalization: 'denied',
+        analytics_storage: 'denied',
+        wait_for_update: 500
+      });
+      // GA4 is loaded from the app only after the visitor consents and a Measurement ID is set in Admin.
+    </script>
+
+    <!-- Prevent Theme Flash -->
+    <script>
+      (function () {
+        try {
+          var saved = localStorage.getItem('scholarpath_theme');
+          var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          if (saved === 'dark' || (!saved && prefersDark)) {
+            document.documentElement.classList.add('dark');
+          }
+        } catch (e) {}
+      })();
+    </script>
+
+  </head>
+  <body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 antialiased selection:bg-amber-200 selection:text-slate-950 dark:selection:bg-amber-500/30 dark:selection:text-amber-100">
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

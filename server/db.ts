@@ -623,11 +623,11 @@ function seedDatabaseIfEmpty() {
       'INSERT INTO media_assets (id, title, url, alt_text, category, width, height, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
     );
     const defaults = [
-      ['media_hero_campus', 'Campus Quad & Library Hero', '/src/assets/images/hero_campus_library_1794638342764.jpg', 'Diverse U.S. college students walking across a sunlit red-brick university quad toward the campus library', 'Hero', 1408, 768],
-      ['media_graduation', 'Commencement Graduates', '/src/assets/images/students_graduation_success_1794638342911.jpg', 'Diverse graduating university students in navy and gold academic gowns celebrating scholarship completion on campus', 'Guides', 1280, 960],
-      ['media_stem_lab', 'STEM Research Lab', '/src/assets/images/stem_research_lab_1794638342903.jpg', 'Diverse university STEM students collaborating at a sunlit laboratory bench with scientific instruments', 'STEM', 1280, 960],
-      ['media_reading_room', 'Library Reading Room', '/src/assets/images/university_reading_room_1794638343996.jpg', 'Students studying in a sunlit American university library reading room with oak tables and brass lamps', 'Financial Aid', 1280, 960],
-      ['media_counselor_essay', 'Counselor Essay Advising', '/src/assets/images/counselor_student_essay_1794638343904.jpg', 'High school senior reviewing scholarship application essays and financial aid portal with a college advisor', 'Essays', 1280, 960],
+      ['media_hero_campus', 'Campus Quad & Library Hero', '/images/hero_campus_library_1794638342764.jpg', 'Diverse U.S. college students walking across a sunlit red-brick university quad toward the campus library', 'Hero', 1408, 768],
+      ['media_graduation', 'Commencement Graduates', '/images/students_graduation_success_1794638342911.jpg', 'Diverse graduating university students in navy and gold academic gowns celebrating scholarship completion on campus', 'Guides', 1280, 960],
+      ['media_stem_lab', 'STEM Research Lab', '/images/stem_research_lab_1794638342903.jpg', 'Diverse university STEM students collaborating at a sunlit laboratory bench with scientific instruments', 'STEM', 1280, 960],
+      ['media_reading_room', 'Library Reading Room', '/images/university_reading_room_1794638343996.jpg', 'Students studying in a sunlit American university library reading room with oak tables and brass lamps', 'Financial Aid', 1280, 960],
+      ['media_counselor_essay', 'Counselor Essay Advising', '/images/counselor_student_essay_1794638343904.jpg', 'High school senior reviewing scholarship application essays and financial aid portal with a college advisor', 'Essays', 1280, 960],
     ] as const;
 
     defaults.forEach(([id, title, url, alt, cat, w, h]) => {
@@ -653,6 +653,9 @@ for (const table of ['guides', 'scholarships']) {
 addColumnIfMissing('guides', 'sources_json', "TEXT NOT NULL DEFAULT '[]'");
 addColumnIfMissing('guides', 'publish_at', "TEXT NOT NULL DEFAULT ''");
 addColumnIfMissing('guides', 'image_alt', "TEXT NOT NULL DEFAULT ''");
+
+// Image files moved from /src/assets/images to /images (works in production builds).
+db.prepare("UPDATE media_assets SET url = REPLACE(url, '/src/assets/images/', '/images/') WHERE url LIKE '/src/assets/images/%'").run();
 
 // Replace invented people/credentials and placeholder contact details that earlier versions shipped.
 db.prepare(

@@ -38,7 +38,8 @@ Labels: **PASS** verified · **FIXED** found and corrected · **NEEDS ATTENTION*
 | `robots.txt`, `sitemap.xml` (sample records excluded), `ads.txt` | PASS (fetched). `ads.txt` is empty until you paste the lines your networks give you (Admin → Monetization) |
 | Per-page title/description/canonical/OG, noindex on admin/404/sample pages | PASS (checked in browser) |
 | Pre-rendering / SSR | NEEDS ATTENTION. Pages are client-rendered; Google renders JS but AdSense/Media.net reviewers and social crawlers see less. Consider pre-rendering |
-| Performance / Core Web Vitals | NOT VERIFIED. Single 599 kB JS bundle (150 kB gzip), 5 JPEGs of 0.85–1.26 MB each; no Lighthouse run was done. Compress the images and code-split |
+| Images and bundle | FIXED. Images were served from `/src/assets/...`, a path that does not exist in a production build; moved to `/images/` and compressed 4.9 MB → 0.99 MB. Routes are code-split: main bundle 599 kB → 275 kB (82 kB gzip). **Verified** in a production run: 0 broken images, 0 console errors |
+| Core Web Vitals / Lighthouse | NOT VERIFIED (no Lighthouse run). Image licensing/origin of the 5 bundled photos is NOT VERIFIED |
 | Dependencies | `npm install` needs `--legacy-peer-deps` (peer conflict); `npm audit` not run → NOT VERIFIED |
 | Multi-viewport check (390px and 1280px, 11 routes): no horizontal scroll, no console/page errors | PASS |
 

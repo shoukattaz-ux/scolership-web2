@@ -1,30 +1,30 @@
-import { useEffect } from 'react';
+import { Suspense, lazy, useEffect } from 'react';
 import { BrowserRouter, Route, Routes, useLocation } from 'react-router-dom';
 import { AppProvider } from './context/AppContext';
 import { Layout } from './components/Layout';
 import { HomePage } from './pages/HomePage';
-import { ScholarshipsPage } from './pages/ScholarshipsPage';
-import { ScholarshipDetailPage } from './pages/ScholarshipDetailPage';
-import { UniversitiesPage } from './pages/UniversitiesPage';
-import { UniversityDetailPage } from './pages/UniversityDetailPage';
-import { GuidesPage } from './pages/GuidesPage';
-import { GuideDetailPage } from './pages/GuideDetailPage';
-import { QuizPage } from './pages/QuizPage';
-import { ComparePage } from './pages/ComparePage';
-import { SavedPage } from './pages/SavedPage';
-import { SearchPage } from './pages/SearchPage';
-import { AboutPage } from './pages/AboutPage';
-import { ContactPage } from './pages/ContactPage';
-import { AdvertisePage } from './pages/AdvertisePage';
-import { PrivacyPolicyPage } from './pages/PrivacyPolicyPage';
-import { TermsPage } from './pages/TermsPage';
-import { DisclaimerPage } from './pages/DisclaimerPage';
-import { EditorialPolicyPage } from './pages/EditorialPolicyPage';
-import { CookiePolicyPage } from './pages/CookiePolicyPage';
-import { HtmlSitemapPage } from './pages/HtmlSitemapPage';
-import { NotFoundPage } from './pages/NotFoundPage';
-import { AdminLoginPage } from './pages/AdminLoginPage';
-import { AdminDashboardPage } from './pages/AdminDashboardPage';
+const ScholarshipsPage = lazy(() => import('./pages/ScholarshipsPage').then((m) => ({ default: m.ScholarshipsPage })));
+const ScholarshipDetailPage = lazy(() => import('./pages/ScholarshipDetailPage').then((m) => ({ default: m.ScholarshipDetailPage })));
+const UniversitiesPage = lazy(() => import('./pages/UniversitiesPage').then((m) => ({ default: m.UniversitiesPage })));
+const UniversityDetailPage = lazy(() => import('./pages/UniversityDetailPage').then((m) => ({ default: m.UniversityDetailPage })));
+const GuidesPage = lazy(() => import('./pages/GuidesPage').then((m) => ({ default: m.GuidesPage })));
+const GuideDetailPage = lazy(() => import('./pages/GuideDetailPage').then((m) => ({ default: m.GuideDetailPage })));
+const QuizPage = lazy(() => import('./pages/QuizPage').then((m) => ({ default: m.QuizPage })));
+const ComparePage = lazy(() => import('./pages/ComparePage').then((m) => ({ default: m.ComparePage })));
+const SavedPage = lazy(() => import('./pages/SavedPage').then((m) => ({ default: m.SavedPage })));
+const SearchPage = lazy(() => import('./pages/SearchPage').then((m) => ({ default: m.SearchPage })));
+const AboutPage = lazy(() => import('./pages/AboutPage').then((m) => ({ default: m.AboutPage })));
+const ContactPage = lazy(() => import('./pages/ContactPage').then((m) => ({ default: m.ContactPage })));
+const AdvertisePage = lazy(() => import('./pages/AdvertisePage').then((m) => ({ default: m.AdvertisePage })));
+const PrivacyPolicyPage = lazy(() => import('./pages/PrivacyPolicyPage').then((m) => ({ default: m.PrivacyPolicyPage })));
+const TermsPage = lazy(() => import('./pages/TermsPage').then((m) => ({ default: m.TermsPage })));
+const DisclaimerPage = lazy(() => import('./pages/DisclaimerPage').then((m) => ({ default: m.DisclaimerPage })));
+const EditorialPolicyPage = lazy(() => import('./pages/EditorialPolicyPage').then((m) => ({ default: m.EditorialPolicyPage })));
+const CookiePolicyPage = lazy(() => import('./pages/CookiePolicyPage').then((m) => ({ default: m.CookiePolicyPage })));
+const HtmlSitemapPage = lazy(() => import('./pages/HtmlSitemapPage').then((m) => ({ default: m.HtmlSitemapPage })));
+const NotFoundPage = lazy(() => import('./pages/NotFoundPage').then((m) => ({ default: m.NotFoundPage })));
+const AdminLoginPage = lazy(() => import('./pages/AdminLoginPage').then((m) => ({ default: m.AdminLoginPage })));
+const AdminDashboardPage = lazy(() => import('./pages/AdminDashboardPage').then((m) => ({ default: m.AdminDashboardPage })));
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -40,6 +40,7 @@ export default function App() {
       <BrowserRouter>
         <ScrollToTop />
         <Layout>
+          <Suspense fallback={<div className="min-h-[50vh]" aria-busy="true" />}>
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/scholarships" element={<ScholarshipsPage />} />
@@ -66,6 +67,7 @@ export default function App() {
             <Route path="/admin" element={<AdminDashboardPage />} />
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
+          </Suspense>
         </Layout>
       </BrowserRouter>
     </AppProvider>

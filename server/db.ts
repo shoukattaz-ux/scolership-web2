@@ -202,6 +202,8 @@ export const DEFAULT_SETTINGS = {
     ga4MeasurementId: '',
     googleSiteVerification: '',
     lastSiteAuditDate: '2026-11-15',
+    // Sample/unverified records are hidden from the public site unless the owner turns this on.
+    showSampleData: false,
   },
   homepage: {
     heroEyebrow: 'U.S. University Scholarship Directory · 2026–2027 Cycle',

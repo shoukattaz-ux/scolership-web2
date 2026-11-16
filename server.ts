@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import crypto from 'node:crypto';
 import express, { type Request, type Response, type NextFunction } from 'express';
+import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createServer as createViteServer } from 'vite';
@@ -15,6 +16,7 @@ import {
   mapScholarshipRow,
   mapUniversityRow,
 } from './server/db.ts';
+import { applyPage, resolvePage } from './server/render.ts';
 import {
   hashPassword,
   isValidEmail,
@@ -178,6 +180,25 @@ async function startServer() {
     res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
     res.setHeader('X-Frame-Options', 'SAMEORIGIN');
     res.setHeader('Cross-Origin-Opener-Policy', 'same-origin-allow-popups');
+    if (isProduction && !_req.path.startsWith('/api/')) {
+      // Allows only this site plus the Google (AdSense/Analytics/Fonts) and Media.net hosts the site can load.
+      res.setHeader(
+        'Content-Security-Policy',
+        [
+          "default-src 'self'",
+          "script-src 'self' 'unsafe-inline' https://pagead2.googlesyndication.com https://www.googletagmanager.com https://*.googlesyndication.com https://googleads.g.doubleclick.net https://adservice.google.com https://www.google.com https://contextual.media.net https://*.media.net",
+          "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+          "font-src 'self' https://fonts.gstatic.com",
+          "img-src 'self' data: https:",
+          "connect-src 'self' https:",
+          "frame-src https://googleads.g.doubleclick.net https://*.googlesyndication.com https://www.google.com https://*.media.net",
+          "object-src 'none'",
+          "base-uri 'self'",
+          "form-action 'self'",
+          "frame-ancestors 'self'",
+        ].join('; ')
+      );
+    }
     if (isProduction) res.setHeader('Strict-Transport-Security', 'max-age=15552000; includeSubDomains');
     if (_req.path.startsWith('/api/')) res.setHeader('Cache-Control', res.getHeader('Cache-Control') || 'no-store');
     next();
@@ -278,18 +299,19 @@ Sitemap: ${baseUrl}/sitemap.xml
   });
 
   // --- Public Read APIs ---
-  app.get('/api/bootstrap', (_req, res) => {
+  const buildBootstrap = () => {
     const categories = (
       db.prepare('SELECT * FROM categories ORDER BY sort_order ASC').all() as any[]
     ).map(mapCategoryRow);
 
-    const universities = (db.prepare('SELECT * FROM universities ORDER BY name ASC').all() as any[]).map(
-      mapUniversityRow
-    );
-
+    const sampleOk = Boolean(getAllSettings().general.showSampleData);
+    const sampleFilter = sampleOk ? '' : ' AND is_sample_data = 0';
+    const universities = (
+      db.prepare(`SELECT * FROM universities ${sampleOk ? '' : 'WHERE is_sample_data = 0'} ORDER BY name ASC`).all() as any[]
+    ).map(mapUniversityRow);
     const scholarships = (
       db
-        .prepare("SELECT * FROM scholarships WHERE status = 'published' ORDER BY deadline_iso ASC")
+        .prepare(`SELECT * FROM scholarships WHERE status = 'published'${sampleFilter} ORDER BY deadline_iso ASC`)
         .all() as any[]
     ).map(mapScholarshipRow);
 
@@ -310,8 +332,7 @@ Sitemap: ${baseUrl}/sitemap.xml
     const mediaAssets = db.prepare('SELECT * FROM media_assets ORDER BY created_at DESC').all();
     const settings = getAllSettings();
 
-    res.header('Cache-Control', 'public, max-age=30');
-    res.json({
+    return {
       categories,
       universities,
       scholarships,
@@ -319,7 +340,12 @@ Sitemap: ${baseUrl}/sitemap.xml
       legalPages,
       mediaAssets,
       settings,
-    });
+    };
+  };
+
+  app.get('/api/bootstrap', (_req, res) => {
+    res.header('Cache-Control', 'public, max-age=30');
+    res.json(buildBootstrap());
   });
 
   app.get('/api/search', (req, res) => {
@@ -328,11 +354,12 @@ Sitemap: ${baseUrl}/sitemap.xml
       return res.json({ scholarships: [], universities: [], guides: [] });
     }
     const pattern = `%${rawQ}%`;
+    const hideSample = !getAllSettings().general.showSampleData;
     const scholarships = (
       db
         .prepare(
           `SELECT * FROM scholarships
-           WHERE status = 'published'
+           WHERE status = 'published' ${hideSample ? 'AND is_sample_data = 0' : ''}
              AND (title LIKE ? OR university_name LIKE ? OR state LIKE ? OR overview LIKE ?)
            LIMIT 20`
         )
@@ -341,7 +368,7 @@ Sitemap: ${baseUrl}/sitemap.xml
 
     const universities = (
       db
-        .prepare('SELECT * FROM universities WHERE name LIKE ? OR state LIKE ? OR city LIKE ? LIMIT 10')
+        .prepare(`SELECT * FROM universities WHERE (name LIKE ? OR state LIKE ? OR city LIKE ?) ${hideSample ? 'AND is_sample_data = 0' : ''} LIMIT 10`)
         .all(pattern, pattern, pattern) as any[]
     ).map(mapUniversityRow);
 
@@ -388,65 +415,6 @@ Sitemap: ${baseUrl}/sitemap.xml
         success: true,
         message: 'Thank you. Your message has been received and we will reply by email as soon as we can.',
         referenceId: id,
-      });
-    }
-  );
-
-  app.post(
-    '/api/newsletter',
-    rateLimit({ windowMs: 60_000, max: 12, keyPrefix: 'newsletter' }),
-    (req, res) => {
-      const email = sanitizeText(req.body?.email, 160).toLowerCase();
-      const role = sanitizeText(req.body?.role, 80) || 'Student';
-
-      if (!isValidEmail(email)) {
-        return res.status(400).json({ error: 'Please enter a valid email address.' });
-      }
-
-      const existing = db
-        .prepare('SELECT id FROM newsletter_subscribers WHERE email = ?')
-        .get(email);
-      if (!existing) {
-        db.prepare(
-          'INSERT INTO newsletter_subscribers (id, email, role, created_at) VALUES (?, ?, ?, ?)'
-        ).run(`sub_${Date.now()}`, email, role, new Date().toISOString());
-      }
-
-      return res.status(200).json({
-        success: true,
-        message: 'Thanks! Your email address has been added to the list.',
-      });
-    }
-  );
-
-  app.post(
-    '/api/reminders',
-    rateLimit({ windowMs: 60_000, max: 15, keyPrefix: 'reminders' }),
-    (req, res) => {
-      const email = sanitizeText(req.body?.email, 160).toLowerCase();
-      const scholarshipSlug = sanitizeText(req.body?.scholarshipSlug, 160);
-      const scholarshipTitle = sanitizeText(req.body?.scholarshipTitle, 240);
-
-      if (!isValidEmail(email)) {
-        return res.status(400).json({ error: 'Please enter a valid email address for reminders.' });
-      }
-      if (!scholarshipSlug) {
-        return res.status(400).json({ error: 'Missing scholarship reference.' });
-      }
-
-      db.prepare(
-        'INSERT INTO deadline_reminders (id, email, scholarship_slug, scholarship_title, created_at) VALUES (?, ?, ?, ?, ?)'
-      ).run(
-        `rem_${Date.now()}_${crypto.randomBytes(2).toString('hex')}`,
-        email,
-        scholarshipSlug,
-        scholarshipTitle || scholarshipSlug,
-        new Date().toISOString()
-      );
-
-      return res.status(200).json({
-        success: true,
-        message: 'Your reminder request has been saved. Always confirm the official deadline with the university.',
       });
     }
   );
@@ -1145,17 +1113,34 @@ Sitemap: ${baseUrl}/sitemap.xml
     res.json(snapshot);
   });
 
+  const renderHtml = (template: string, req: Request, res: Response) => {
+    const info = resolvePage(req.path);
+    res.status(info.status).type('html').send(applyPage(template, info, getBaseUrl(req), buildBootstrap()));
+  };
+
   if (!isProduction) {
     const vite = await createViteServer({
       server: { middlewareMode: true },
-      appType: 'spa',
+      appType: 'custom',
     });
     app.use(vite.middlewares);
+    app.get('*', async (req, res, next) => {
+      try {
+        const raw = fs.readFileSync(path.resolve(__dirname, 'index.html'), 'utf-8');
+        const template = await vite.transformIndexHtml(req.originalUrl, raw);
+        renderHtml(template, req, res);
+      } catch (e) {
+        next(e);
+      }
+    });
   } else {
     const distPath = path.resolve(__dirname, 'dist');
-    app.use(express.static(distPath, { maxAge: '7d' }));
-    app.get('*', (_req, res) => {
-      res.sendFile(path.join(distPath, 'index.html'));
+    const template = fs.readFileSync(path.join(distPath, 'index.html'), 'utf-8');
+    app.use(express.static(distPath, { maxAge: '7d', index: false }));
+    app.get('*', (req, res) => {
+      if (req.path.startsWith('/api/')) return res.status(404).json({ error: 'Not found.' });
+      res.setHeader('Cache-Control', 'no-cache');
+      renderHtml(template, req, res);
     });
   }
 

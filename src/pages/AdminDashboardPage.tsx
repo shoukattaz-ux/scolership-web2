@@ -1727,6 +1727,21 @@ export function AdminDashboardPage() {
                     />
                   </div>
                 </div>
+                <label className="flex items-start gap-2 text-xs text-slate-700 dark:text-slate-300 mb-4">
+                  <input
+                    type="checkbox"
+                    checked={Boolean((settingsForm.general as any).showSampleData)}
+                    onChange={(e) =>
+                      setSettingsForm({
+                        ...settingsForm,
+                        general: { ...settingsForm.general, showSampleData: e.target.checked } as any,
+                      })
+                    }
+                  />
+                  <span>
+                    Show sample / unverified scholarships and universities to the public (off = hidden until you replace them with verified records)
+                  </span>
+                </label>
                 <button
                   type="button"
                   onClick={() => handleSaveSettingsGroup('general', 'General & SEO settings')}

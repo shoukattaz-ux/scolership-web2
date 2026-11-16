@@ -21,24 +21,16 @@ import { NotFoundPage } from './NotFoundPage';
 
 export function ScholarshipDetailPage() {
   const { slug } = useParams<{ slug: string }>();
-  const { scholarships, universities, categories, isSaved, toggleSaved, isCompared, toggleCompare } =
+  const { scholarships, universities, categories, isSaved, toggleSaved, isCompared, toggleCompare, siteDataLoaded } =
     useAppContext();
 
   const scholarship: any = slug ? scholarships.find((s) => s.slug === slug) : undefined;
 
-  const [reminderEmail, setReminderEmail] = useState('');
-  const [reminderStatus, setReminderStatus] = useState<{
-    type: 'idle' | 'loading' | 'success' | 'error';
-    text: string;
-  }>({
-    type: 'idle',
-    text: '',
-  });
   const [copied, setCopied] = useState(false);
   const [compareLimitMsg, setCompareLimitMsg] = useState(false);
 
   if (!scholarship) {
-    return <NotFoundPage />;
+    return siteDataLoaded ? <NotFoundPage /> : <div className="min-h-[60vh]" aria-busy="true" />;
   }
 
   const university = universities.find((u) => u.slug === scholarship.universitySlug);
@@ -53,31 +45,6 @@ export function ScholarshipDetailPage() {
         (s.category === scholarship.category || s.universitySlug === scholarship.universitySlug)
     )
     .slice(0, 3);
-
-  const handleReminderSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setReminderStatus({ type: 'loading', text: '' });
-    try {
-      const res = await fetch('/api/reminders', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email: reminderEmail,
-          scholarshipSlug: scholarship.slug,
-          scholarshipTitle: scholarship.title,
-        }),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        setReminderStatus({ type: 'error', text: data.error || 'Unable to set reminder.' });
-      } else {
-        setReminderStatus({ type: 'success', text: data.message });
-        setReminderEmail('');
-      }
-    } catch {
-      setReminderStatus({ type: 'error', text: 'Network error. Please try again.' });
-    }
-  };
 
   const handleCopyShare = async () => {
     try {
@@ -382,46 +349,6 @@ export function ScholarshipDetailPage() {
           </div>
 
           <aside className="lg:col-span-4 space-y-6">
-            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 space-y-4">
-              <div className="flex items-center gap-2 text-navy-900 dark:text-gold-400">
-                <Bell className="w-4 h-4" aria-hidden="true" />
-                <h2 className="text-base font-serif font-bold text-slate-900 dark:text-white">
-                  Set Deadline Email Reminder
-                </h2>
-              </div>
-              <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-                Receive email alerts 14 days and 3 days before the {scholarship.deadlineLabel} deadline.
-              </p>
-              <form onSubmit={handleReminderSubmit} className="space-y-3">
-                <input
-                  type="email"
-                  required
-                  value={reminderEmail}
-                  onChange={(e) => setReminderEmail(e.target.value)}
-                  placeholder="student@example.com"
-                  aria-label="Email for deadline reminder"
-                  className="w-full px-3.5 py-2.5 text-sm rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100"
-                />
-                <button
-                  type="submit"
-                  disabled={reminderStatus.type === 'loading'}
-                  className="w-full px-4 py-2.5 rounded-lg bg-navy-900 text-white hover:bg-navy-800 dark:bg-gold-500 dark:text-slate-950 dark:hover:bg-gold-400 text-xs font-semibold transition-colors cursor-pointer"
-                >
-                  {reminderStatus.type === 'loading' ? 'Scheduling...' : 'Send Me Reminder'}
-                </button>
-              </form>
-              {reminderStatus.type === 'success' && (
-                <p role="status" className="text-xs text-emerald-700 dark:text-emerald-300">
-                  {reminderStatus.text}
-                </p>
-              )}
-              {reminderStatus.type === 'error' && (
-                <p role="alert" className="text-xs text-rose-700 dark:text-rose-400">
-                  {reminderStatus.text}
-                </p>
-              )}
-            </div>
-
             <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 space-y-4 text-xs">
               <h2 className="text-base font-serif font-bold text-slate-900 dark:text-white">
                 Program Scope

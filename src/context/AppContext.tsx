@@ -74,6 +74,7 @@ export interface SiteSettingsData {
     ga4MeasurementId: string;
     googleSiteVerification: string;
     lastSiteAuditDate: string;
+    showSampleData?: boolean;
   };
   homepage: {
     heroEyebrow: string;
@@ -183,6 +184,7 @@ interface AppContextValue {
   mediaAssets: MediaAssetRecord[];
   settings: SiteSettingsData;
   refreshSiteData: () => Promise<void>;
+  siteDataLoaded: boolean;
 
   // Auth Session
   authUser: AuthUser | null;
@@ -245,14 +247,16 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const [showCookieModal, setShowCookieModal] = useState(false);
 
-  // Live CMS state initialized from bundled defaults for immediate first render
-  const [categories, setCategories] = useState<ScholarshipCategory[]>(SCHOLARSHIP_CATEGORIES);
-  const [universities, setUniversities] = useState<University[]>(UNIVERSITIES);
-  const [scholarships, setScholarships] = useState<Scholarship[]>(SCHOLARSHIPS);
-  const [guides, setGuides] = useState<GuideArticle[]>(EDITORIAL_GUIDES);
-  const [legalPages, setLegalPages] = useState<LegalPageData[]>([]);
-  const [mediaAssets, setMediaAssets] = useState<MediaAssetRecord[]>([]);
-  const [settings, setSettings] = useState<SiteSettingsData>(DEFAULT_SETTINGS_STATE);
+  // Live CMS state: the server embeds the same data as /api/bootstrap in the HTML so the first paint is complete.
+  const boot: any = typeof window !== 'undefined' ? (window as any).__BOOTSTRAP__ : undefined;
+  const [categories, setCategories] = useState<ScholarshipCategory[]>(boot?.categories?.length ? boot.categories : SCHOLARSHIP_CATEGORIES);
+  const [universities, setUniversities] = useState<University[]>(boot?.universities || []);
+  const [scholarships, setScholarships] = useState<Scholarship[]>(boot?.scholarships || []);
+  const [siteDataLoaded, setSiteDataLoaded] = useState(Boolean(boot));
+  const [guides, setGuides] = useState<GuideArticle[]>(boot?.guides || []);
+  const [legalPages, setLegalPages] = useState<LegalPageData[]>(boot?.legalPages || []);
+  const [mediaAssets, setMediaAssets] = useState<MediaAssetRecord[]>(boot?.mediaAssets || []);
+  const [settings, setSettings] = useState<SiteSettingsData>(boot?.settings || DEFAULT_SETTINGS_STATE);
 
   const [authUser, setAuthUser] = useState<AuthUser | null>(null);
   const [csrfToken, setCsrfToken] = useState<string | null>(null);
@@ -264,14 +268,16 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       if (!res.ok) return;
       const data = await res.json();
       if (Array.isArray(data.categories) && data.categories.length) setCategories(data.categories);
-      if (Array.isArray(data.universities) && data.universities.length) setUniversities(data.universities);
+      if (Array.isArray(data.universities)) setUniversities(data.universities);
       if (Array.isArray(data.scholarships)) setScholarships(data.scholarships);
       if (Array.isArray(data.guides)) setGuides(data.guides);
       if (Array.isArray(data.legalPages)) setLegalPages(data.legalPages);
       if (Array.isArray(data.mediaAssets)) setMediaAssets(data.mediaAssets);
       if (data.settings) setSettings(data.settings);
     } catch {
-      // Fallback safely to static seed data
+      // Keep empty lists; pages show their empty states
+    } finally {
+      setSiteDataLoaded(true);
     }
   }, []);
 
@@ -495,6 +501,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         mediaAssets,
         settings,
         refreshSiteData,
+        siteDataLoaded,
         authUser,
         csrfToken,
         authLoading,

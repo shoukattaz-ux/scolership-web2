@@ -70,6 +70,7 @@ export function HtmlSitemapPage() {
               <li><Link to="/about" className="hover:underline">About Us</Link></li>
               <li><Link to="/contact" className="hover:underline">Contact Us</Link></li>
               <li><Link to="/advertise" className="hover:underline">Advertise With Us</Link></li>
+              <li><Link to="/editorial-policy" className="hover:underline">Editorial Policy &amp; Corrections</Link></li>
               <li><Link to="/privacy-policy" className="hover:underline">Privacy Policy</Link></li>
               <li><Link to="/terms" className="hover:underline">Terms &amp; Conditions</Link></li>
               <li><Link to="/disclaimer" className="hover:underline">Disclaimer</Link></li>

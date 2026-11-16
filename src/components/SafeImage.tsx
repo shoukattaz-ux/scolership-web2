@@ -42,6 +42,7 @@ export function SafeImage({
       height={asset.height}
       loading={priority ? 'eager' : 'lazy'}
       decoding={priority ? 'sync' : 'async'}
+      fetchPriority={priority ? 'high' : 'auto'}
       referrerPolicy="no-referrer"
       onError={() => setFailed(true)}
       className={className}

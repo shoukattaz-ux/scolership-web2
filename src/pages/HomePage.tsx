@@ -12,7 +12,7 @@ const HOME_FAQS = [
   {
     question: 'Are the scholarships listed on ScholarPath USA real U.S. university programs?',
     answer:
-      'Yes, our directory models major U.S. university merit, need-based, STEM, athletic, diversity, and veteran awards. All sample listings are clearly labeled so families verify final dollar amounts and deadlines directly on each university’s official financial aid portal.',
+      'We list programs only after checking them against the sponsor’s official page, and each listing links to that source. Award amounts and deadlines change every cycle, so always confirm the final details on the university’s official financial aid portal before applying.',
   },
   {
     question: 'What is the difference between Fully Funded and Full Tuition scholarships?',
@@ -40,37 +40,6 @@ export function HomePage() {
     .slice(0, hp.featuredCount || 6);
   const topUniversities = universities.slice(0, 6);
   const latestGuides = guides.slice(0, 3);
-
-  const [newsletterEmail, setNewsletterEmail] = useState('');
-  const [newsletterRole, setNewsletterRole] = useState('High School Senior');
-  const [newsletterStatus, setNewsletterStatus] = useState<{
-    type: 'idle' | 'loading' | 'success' | 'error';
-    text: string;
-  }>({
-    type: 'idle',
-    text: '',
-  });
-
-  const handleNewsletterSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setNewsletterStatus({ type: 'loading', text: '' });
-    try {
-      const res = await fetch('/api/newsletter', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: newsletterEmail, role: newsletterRole }),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        setNewsletterStatus({ type: 'error', text: data.error || 'Subscription failed.' });
-      } else {
-        setNewsletterStatus({ type: 'success', text: data.message });
-        setNewsletterEmail('');
-      }
-    } catch {
-      setNewsletterStatus({ type: 'error', text: 'Network error. Please try again.' });
-    }
-  };
 
   const faqSchema = {
     '@context': 'https://schema.org',
@@ -137,19 +106,23 @@ export function HomePage() {
             </div>
           </div>
 
-          <div className="mt-14 pt-8 border-t border-white/15 grid grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="mt-14 pt-8 border-t border-white/15 grid grid-cols-2 lg:grid-cols-4 gap-6 min-h-[6.5rem]">
             <div>
               <p className="text-2xl font-serif font-bold text-white tabular-nums">{categories.length}</p>
               <p className="text-xs text-slate-300 mt-1">Structured Funding Categories</p>
             </div>
-            <div>
-              <p className="text-2xl font-serif font-bold text-white tabular-nums">{scholarships.length}</p>
-              <p className="text-xs text-slate-300 mt-1">Published Award Profiles</p>
-            </div>
-            <div>
-              <p className="text-2xl font-serif font-bold text-white tabular-nums">{universities.length}</p>
-              <p className="text-xs text-slate-300 mt-1">Featured U.S. Universities</p>
-            </div>
+            {scholarships.length > 0 && (
+              <div>
+                <p className="text-2xl font-serif font-bold text-white tabular-nums">{scholarships.length}</p>
+                <p className="text-xs text-slate-300 mt-1">Published Award Profiles</p>
+              </div>
+            )}
+            {universities.length > 0 && (
+              <div>
+                <p className="text-2xl font-serif font-bold text-white tabular-nums">{universities.length}</p>
+                <p className="text-xs text-slate-300 mt-1">Featured U.S. Universities</p>
+              </div>
+            )}
             <div>
               <p className="text-2xl font-serif font-bold text-gold-400 tabular-nums">Up to 3</p>
               <p className="text-xs text-slate-300 mt-1">Side-by-Side Award Comparisons</p>
@@ -158,7 +131,19 @@ export function HomePage() {
         </div>
       </section>
 
+      {scholarships.length === 0 && (
+        <section className="max-w-4xl mx-auto px-4 sm:px-6 pt-12">
+          <div className="rounded-2xl border border-amber-200 dark:border-amber-800/60 bg-amber-50 dark:bg-amber-950/30 p-6 text-sm text-amber-950 dark:text-amber-200 leading-relaxed">
+            <strong>Directory update in progress.</strong> We are checking each scholarship against the sponsoring
+            university’s official page before listing it, so the directory is being rebuilt with verified entries only.
+            In the meantime, our guides explain how aid works and what to look for. See our{' '}
+            <Link to="/editorial-policy" className="underline font-semibold">Editorial Policy</Link>.
+          </div>
+        </section>
+      )}
+
       {/* Featured Scholarships */}
+      {scholarships.length > 0 && (
       <section className="max-w-7xl mx-auto px-4 sm:px-6 py-16">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
           <div>
@@ -184,6 +169,7 @@ export function HomePage() {
           ))}
         </div>
       </section>
+      )}
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 empty:hidden">
         <AdSlot position="inContent" />
@@ -269,10 +255,10 @@ export function HomePage() {
                 </li>
                 <li>
                   <h3 className="text-base font-sans font-semibold text-slate-900 dark:text-slate-100">
-                    03. Bookmark Awards &amp; Set Deadline Reminders
+                    03. Bookmark Awards &amp; Track Deadlines
                   </h3>
                   <p className="text-sm text-slate-600 dark:text-slate-400 mt-1 leading-relaxed">
-                    Save shortlisted scholarships locally in your browser and request email alerts ahead of early merit and FAFSA priority cutoffs.
+                    Save shortlisted scholarships locally in your browser and check each university’s official deadline well ahead of early merit and FAFSA priority cutoffs.
                   </p>
                 </li>
               </ol>
@@ -295,7 +281,7 @@ export function HomePage() {
         </section>
       )}
 
-      {hp.showTopUniversities && (
+      {hp.showTopUniversities && universities.length > 0 && (
         <section className="bg-white dark:bg-slate-900/50 border-y border-slate-200 dark:border-slate-800 py-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6">
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
@@ -417,78 +403,6 @@ export function HomePage() {
                 </div>
               </article>
             ))}
-          </div>
-        </section>
-      )}
-
-      {hp.showNewsletter && (
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 pb-16">
-          <div className="bg-navy-900 dark:bg-navy-900 border border-navy-800 rounded-2xl p-8 sm:p-12 text-white grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-            <div className="lg:col-span-6 space-y-3">
-              <div className="inline-flex items-center gap-2 text-xs font-semibold text-gold-400 uppercase tracking-wider">
-                <Mail className="w-4 h-4" aria-hidden="true" />
-                <span>Weekly Deadline Briefing</span>
-              </div>
-              <h2 className="text-2xl sm:text-3xl font-serif font-bold text-white">
-                Never Miss a Full-Ride or FAFSA Priority Cutoff
-              </h2>
-              <p className="text-sm text-slate-300 leading-relaxed">
-                Receive one concise Monday digest covering upcoming U.S. scholarship deadlines, essay prompt updates, and newly added university awards. Unsubscribe anytime.
-              </p>
-            </div>
-
-            <form onSubmit={handleNewsletterSubmit} className="lg:col-span-6 space-y-3">
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <input
-                  type="email"
-                  required
-                  value={newsletterEmail}
-                  onChange={(e) => setNewsletterEmail(e.target.value)}
-                  placeholder="you@example.com"
-                  aria-label="Email address for scholarship alerts"
-                  className="sm:col-span-2 px-4 py-3 rounded-lg bg-white text-slate-900 placeholder:text-slate-500 text-sm focus:outline-none"
-                />
-                <select
-                  value={newsletterRole}
-                  onChange={(e) => setNewsletterRole(e.target.value)}
-                  aria-label="Applicant role"
-                  className="px-3 py-3 rounded-lg bg-navy-800 text-white border border-navy-700 text-sm focus:outline-none"
-                >
-                  <option value="High School Senior">High School Senior</option>
-                  <option value="Undergraduate">Undergraduate</option>
-                  <option value="Transfer Student">Transfer Student</option>
-                  <option value="Graduate / PhD">Graduate / PhD</option>
-                  <option value="Parent / Counselor">Parent / Counselor</option>
-                </select>
-              </div>
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                <button
-                  type="submit"
-                  disabled={newsletterStatus.type === 'loading'}
-                  className="px-5 py-2.5 rounded-lg bg-gold-500 text-slate-950 hover:bg-gold-400 font-semibold text-sm transition-colors cursor-pointer disabled:opacity-60 whitespace-nowrap"
-                >
-                  {newsletterStatus.type === 'loading' ? 'Subscribing...' : 'Subscribe to Deadline Alerts'}
-                </button>
-                <span className="text-xs text-slate-400">
-                  Zero spam. Respects your{' '}
-                  <Link to="/privacy-policy" className="underline hover:text-white">
-                    Privacy Policy
-                  </Link>
-                  .
-                </span>
-              </div>
-              {newsletterStatus.type === 'success' && (
-                <p role="status" className="flex items-center gap-2 text-xs text-emerald-300 pt-1">
-                  <CheckCircle2 className="w-4 h-4 shrink-0" aria-hidden="true" />
-                  <span>{newsletterStatus.text}</span>
-                </p>
-              )}
-              {newsletterStatus.type === 'error' && (
-                <p role="alert" className="text-xs text-rose-300 pt-1">
-                  {newsletterStatus.text}
-                </p>
-              )}
-            </form>
           </div>
         </section>
       )}

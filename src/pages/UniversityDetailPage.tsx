@@ -7,12 +7,12 @@ import { ScholarshipCard } from '../components/ScholarshipCard';
 import { NotFoundPage } from './NotFoundPage';
 
 export function UniversityDetailPage() {
-  const { universities, scholarships } = useAppContext();
+  const { universities, scholarships, siteDataLoaded } = useAppContext();
   const { slug } = useParams<{ slug: string }>();
   const university = slug ? universities.find((u) => u.slug === slug) : undefined;
 
   if (!university) {
-    return <NotFoundPage />;
+    return siteDataLoaded ? <NotFoundPage /> : <div className="min-h-[60vh]" aria-busy="true" />;
   }
 
   const awards = scholarships.filter((s) => s.universitySlug === university.slug);

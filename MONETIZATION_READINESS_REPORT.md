@@ -53,3 +53,13 @@ Labels: **PASS** verified · **FIXED** found and corrected · **NEEDS ATTENTION*
 
 ## 6. Not done / known limitations
 Original-content creation, real photography/licenses for the 5 bundled images (licensing NOT VERIFIED), comments/helpful-votes, user-role UI beyond existing, article revision history, page-management and media-library redesign were not built. They'd be decorative or fabricated without real content. The original uploaded `data/` files are preserved in `backups/original-data/`.
+
+## 7. Update: items 9–14 (2026-11-16)
+| Item | Result |
+|---|---|
+| Pre-rendering | FIXED. The server now injects each page’s title, description, canonical, robots and readable body (guides, legal pages, categories) into the HTML, embeds the site data for an instant first paint, and returns a real **404** for unknown URLs. Verified with curl |
+| Content Security Policy | FIXED (production only). Allows this site plus Google AdSense/Analytics/Fonts and Media.net hosts only. `unsafe-inline` is still needed for inline scripts. Verified: no CSP errors, admin login works |
+| `npm audit` | PASS: 0 vulnerabilities |
+| Lighthouse (production build, local) | Desktop: Performance 97 / Accessibility 94–99 / Best Practices 96 / SEO 100, LCP 1.2 s, CLS 0 (home 96). **Mobile (simulated slow 4G): Performance ≈ 71–72, LCP ≈ 5.5 s: NEEDS ATTENTION** (JavaScript size and the hero image on throttled mobile). Fonts now use `display=optional` to remove layout shift, so first-time visitors may see fallback fonts |
+| Newsletter / reminder forms | REMOVED from the site and server (they never sent mail). Copy that promised alerts was rewritten |
+| Sample records hidden | DONE. The public site, search, sitemap and server-rendered pages exclude sample/unverified scholarships and universities (admin toggle "Show sample…" in Settings, off by default). The homepage shows an honest "directory update in progress" notice. **The site now has 0 listings until you add verified records** |

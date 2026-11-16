@@ -8,12 +8,12 @@ import { AdSlot } from '../components/AdSlot';
 import { NotFoundPage } from './NotFoundPage';
 
 export function GuideDetailPage() {
-  const { guides, scholarships, settings } = useAppContext();
+  const { guides, scholarships, settings, siteDataLoaded } = useAppContext();
   const { slug } = useParams<{ slug: string }>();
   const guide: any = slug ? guides.find((g) => g.slug === slug) : undefined;
 
   if (!guide) {
-    return <NotFoundPage />;
+    return siteDataLoaded ? <NotFoundPage /> : <div className="min-h-[60vh]" aria-busy="true" />;
   }
 
   const breadcrumbs = [

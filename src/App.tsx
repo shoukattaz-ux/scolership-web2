@@ -40,7 +40,7 @@ export default function App() {
       <BrowserRouter>
         <ScrollToTop />
         <Layout>
-          <Suspense fallback={<div className="min-h-[50vh]" aria-busy="true" />}>
+          <Suspense fallback={<div className="min-h-screen" aria-busy="true" />}>
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/scholarships" element={<ScholarshipsPage />} />

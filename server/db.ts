@@ -5,6 +5,7 @@ import { DatabaseSync } from 'node:sqlite';
 import { SCHOLARSHIP_CATEGORIES } from '../src/data/categories.ts';
 import { SCHOLARSHIPS } from '../src/data/scholarships.ts';
 import { UNIVERSITIES } from '../src/data/universities.ts';
+import { VERIFIED_SCHOLARSHIPS } from '../src/data/verified-scholarships.ts';
 import { EDITORIAL_GUIDES } from '../src/data/guides.ts';
 import { hashPassword } from './security.ts';
 
@@ -655,6 +656,34 @@ for (const table of ['guides', 'scholarships']) {
 addColumnIfMissing('guides', 'sources_json', "TEXT NOT NULL DEFAULT '[]'");
 addColumnIfMissing('guides', 'publish_at', "TEXT NOT NULL DEFAULT ''");
 addColumnIfMissing('guides', 'image_alt', "TEXT NOT NULL DEFAULT ''");
+
+// Official-page scholarship records: inserted once (INSERT OR IGNORE, never overwrites edits),
+// always draft + pending_review so a human must review before publishing.
+{
+  const today = new Date().toISOString().slice(0, 10);
+  const ins = db.prepare(`
+    INSERT OR IGNORE INTO scholarships (
+      id, slug, title, university_slug, university_name, state, state_code, category,
+      secondary_categories_json, degree_levels_json, fields_of_study_json,
+      amount_display, amount_numeric, coverage_summary, covers_tuition, covers_housing,
+      covers_books, includes_stipend, renewable, deadline_iso, deadline_label,
+      gpa_min, featured, is_sample_data, status, tags_json, seo_title, seo_description,
+      last_updated, overview, eligibility_json, required_documents_json,
+      application_steps_json, official_url, faqs_json, review_status, review_notes
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '[]', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, 0, 0, 'draft', '[]', '', '', ?, ?, ?, ?, ?, ?, '[]', 'pending_review', ?)
+  `);
+  for (const s of VERIFIED_SCHOLARSHIPS) {
+    ins.run(
+      s.id, s.slug, s.title, s.universitySlug, s.universityName, s.state, s.stateCode, s.category,
+      JSON.stringify(s.secondaryCategories), JSON.stringify(s.degreeLevels),
+      s.amountDisplay, s.amountNumeric, s.coverageSummary,
+      s.coversTuition ? 1 : 0, s.coversHousing ? 1 : 0, s.coversBooks ? 1 : 0, s.includesStipend ? 1 : 0,
+      s.renewable, s.deadlineISO, s.deadlineLabel, today, s.overview,
+      JSON.stringify(s.eligibility), JSON.stringify(s.requiredDocuments), JSON.stringify(s.applicationSteps),
+      s.officialUrl, s.reviewNotes
+    );
+  }
+}
 
 // Image files moved from /src/assets/images to /images (works in production builds).
 db.prepare("UPDATE media_assets SET url = REPLACE(url, '/src/assets/images/', '/images/') WHERE url LIKE '/src/assets/images/%'").run();

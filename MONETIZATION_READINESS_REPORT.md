@@ -63,3 +63,22 @@ Original-content creation, real photography/licenses for the 5 bundled images (l
 | Lighthouse (production build, local) | Desktop: Performance 97 / Accessibility 94–99 / Best Practices 96 / SEO 100, LCP 1.2 s, CLS 0 (home 96). **Mobile (simulated slow 4G): Performance ≈ 71–72, LCP ≈ 5.5 s: NEEDS ATTENTION** (JavaScript size and the hero image on throttled mobile). Fonts now use `display=optional` to remove layout shift, so first-time visitors may see fallback fonts |
 | Newsletter / reminder forms | REMOVED from the site and server (they never sent mail). Copy that promised alerts was rewritten |
 | Sample records hidden | DONE. The public site, search, sitemap and server-rendered pages exclude sample/unverified scholarships and universities (admin toggle "Show sample…" in Settings, off by default). The homepage shows an honest "directory update in progress" notice. **The site now has 0 listings until you add verified records** |
+
+## 8. Update: verified scholarship import (2026-11-16)
+Three records were added from official pages only (`src/data/verified-scholarships.ts`, imported by `server/db.ts` with `INSERT OR IGNORE`). All are `is_sample_data = 0`, **status draft, review_status pending_review**, with the official URL set. Nothing is Reviewed or Published; a human must check each against its page first. No new universities were added (UNC and UVA already exist as directory rows).
+
+**Added (3)**
+| Program | Official page read | Notes |
+|---|---|---|
+| Morehead-Cain Scholarship (UNC) | moreheadcain.org (home, about, eligibility, checklist, deadlines) | No dollar value or GPA stated. Deadlines page lists Oct 1 for the Class of 2031 cycle but infers the year, so deadline label is "See official page" (placeholder date 2099-12-31) |
+| Carolina Covenant (UNC) | studentaid.unc.edu/carolina-covenant (carolinacovenant.unc.edu redirects there) | Income limits are yearly; no date stated |
+| Jefferson Scholars Program, undergraduate (UVA) | jeffersonscholars.org (home, /scholarships) | Page mentions two undergraduate programs; only the combined description was readable. No deadline or materials stated |
+
+**Could not be read (5 of the 8 allowed-host programs)**
+- Robertson Scholars: `robertsonscholars.org` / `www.robertsonscholars.org` failed DNS resolution (host not reachable from this session).
+- AccessUVA (`sfs.virginia.edu`): HTTP 403.
+- Federal Pell Grant, FAFSA, scam-warning page (`studentaid.gov`): HTTP 503 on repeated tries.
+
+**Not attempted** (hosts outside the allowed list, rows 6–15, 17–28 of `docs/scholarship-shortlist.md`). Rows 29–30 are reference pages, not scholarships.
+
+Checks: server run on a temp DB, 3 records appear in `/api/admin/overview` as draft/pending_review, count stays 3 after restart; `npx tsc --noEmit` passes.

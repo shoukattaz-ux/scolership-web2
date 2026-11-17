@@ -184,7 +184,7 @@ export function ComparePage() {
                   <td className="p-5 font-medium text-slate-700 dark:text-slate-300">Minimum GPA</td>
                   {selected.map((s) => (
                     <td key={s.id} className="p-5 border-l border-slate-100 dark:border-slate-800 tabular-nums">
-                      {s.gpaMin.toFixed(2)}
+                      {s.gpaMin > 0 ? s.gpaMin.toFixed(2) : 'Not stated'}
                     </td>
                   ))}
                 </tr>

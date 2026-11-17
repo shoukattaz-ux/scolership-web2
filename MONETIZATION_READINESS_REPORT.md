@@ -82,3 +82,15 @@ Three records were added from official pages only (`src/data/verified-scholarshi
 **Not attempted** (hosts outside the allowed list, rows 6–15, 17–28 of `docs/scholarship-shortlist.md`). Rows 29–30 are reference pages, not scholarships.
 
 Checks: server run on a temp DB, 3 records appear in `/api/admin/overview` as draft/pending_review, count stays 3 after restart; `npx tsc --noEmit` passes.
+
+## 9. Update: more official-page scholarship records (2026-11-17)
+After network access was widened, I read the official pages directly and added **7 more records** (total **10** non-sample records), all `draft` + `pending_review`, `is_sample_data = 0`, each linking to its official page with the reading date in the reviewer notes:
+The Gates Scholarship, QuestBridge National College Match, Coca-Cola Scholars Program, Robertson Scholars Leadership Program, Barry Goldwater Scholarship, Post-9/11 GI Bill, Horatio Alger National Scholarship. (Earlier: Morehead-Cain, Carolina Covenant, Jefferson Scholars.)
+
+**Not added (NOT VERIFIED)**: Federal Pell Grant and FAFSA (studentaid.gov renders with JavaScript, so no text could be read; ed.gov blocked the request), AccessUVA (403), Stamps (server error), Posse and Dell (only general pages readable; no award terms or deadlines found), NSF GRFP (site unreachable), Knight-Hennessy (page moved), SMART (portal not readable), Yellow Ribbon (page not found), National Merit (blocked). Not attempted: Hispanic Scholarship Fund, Jack Kent Cooke, UNCF, APIA Scholars, American Indian College Fund, Fulbright, Hollings, SWE.
+
+**Caveats a reviewer must check before publishing**: several dates are for cycles that already closed (Gates, QuestBridge, Coca-Cola, Robertson) and are shown as such; Gates shows "Status: Open" beside a past deadline; Goldwater's deadline is a rule ("last Friday in January") converted to 2027-01-29; Horatio Alger windows have no year; Morehead-Cain, Carolina Covenant, GI Bill and Horatio Alger show "See official page" instead of a dated deadline.
+
+**Display fixes made for this data**: no fake "days remaining" for undated deadlines, no "0.00 GPA" when none is stated, no empty Fields of Study block, no broken university link for national programs, "Visit Official Page" button text.
+
+**Status: the public site still shows 0 listings** because drafts are not public. An administrator must review each record against its official page, mark it Reviewed, then publish it (Admin → Scholarships).

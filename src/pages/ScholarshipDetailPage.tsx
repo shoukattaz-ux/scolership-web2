@@ -155,12 +155,16 @@ export function ScholarshipDetailPage() {
                     {university?.initials || scholarship.stateCode}
                   </span>
                   <div>
-                    <Link
-                      to={`/university/${scholarship.universitySlug}`}
-                      className="text-sm font-semibold text-navy-900 dark:text-gold-400 hover:underline underline-offset-4"
-                    >
-                      {scholarship.universityName}
-                    </Link>
+                    {university ? (
+                      <Link
+                        to={`/university/${scholarship.universitySlug}`}
+                        className="text-sm font-semibold text-navy-900 dark:text-gold-400 hover:underline underline-offset-4"
+                      >
+                        {scholarship.universityName}
+                      </Link>
+                    ) : (
+                      <span className="text-sm font-semibold text-navy-900 dark:text-gold-400">{scholarship.universityName}</span>
+                    )}
                     <p className="text-xs text-slate-500 dark:text-slate-400">
                       {university ? `${university.city}, ${university.state}` : scholarship.state}
                       <span aria-hidden="true"> · </span>
@@ -198,7 +202,7 @@ export function ScholarshipDetailPage() {
                 <div>
                   <span className="text-xs text-slate-500 dark:text-slate-400 block">Minimum GPA &amp; Renewal</span>
                   <span className="text-sm font-semibold text-slate-900 dark:text-slate-100 tabular-nums mt-0.5 block">
-                    {scholarship.gpaMin.toFixed(2)} GPA
+                    {scholarship.gpaMin > 0 ? `${scholarship.gpaMin.toFixed(2)} GPA` : 'No GPA minimum stated'}
                   </span>
                   <span className="text-xs text-slate-500 dark:text-slate-400">{scholarship.renewable}</span>
                 </div>
@@ -211,7 +215,7 @@ export function ScholarshipDetailPage() {
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-navy-900 text-white hover:bg-navy-800 dark:bg-gold-500 dark:text-slate-950 dark:hover:bg-gold-400 text-sm font-semibold transition-colors"
                 >
-                  <span>Visit Official University Portal</span>
+                  <span>Visit Official Page</span>
                   <ExternalLink className="w-4 h-4" aria-hidden="true" />
                 </a>
 
@@ -359,12 +363,14 @@ export function ScholarshipDetailPage() {
                   {scholarship.degreeLevels.join(' · ')}
                 </p>
               </div>
-              <div>
-                <span className="text-slate-500 dark:text-slate-400 block mb-1">Fields of Study</span>
-                <p className="font-medium text-slate-900 dark:text-slate-100">
-                  {scholarship.fieldsOfStudy.join(' · ')}
-                </p>
-              </div>
+              {scholarship.fieldsOfStudy.length > 0 && (
+                <div>
+                  <span className="text-slate-500 dark:text-slate-400 block mb-1">Fields of Study</span>
+                  <p className="font-medium text-slate-900 dark:text-slate-100">
+                    {scholarship.fieldsOfStudy.join(' · ')}
+                  </p>
+                </div>
+              )}
             </div>
 
             <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 space-y-3">

@@ -94,3 +94,10 @@ The Gates Scholarship, QuestBridge National College Match, Coca-Cola Scholars Pr
 **Display fixes made for this data**: no fake "days remaining" for undated deadlines, no "0.00 GPA" when none is stated, no empty Fields of Study block, no broken university link for national programs, "Visit Official Page" button text.
 
 **Status: the public site still shows 0 listings** because drafts are not public. An administrator must review each record against its official page, mark it Reviewed, then publish it (Admin → Scholarships).
+
+## 10. Update: remaining shortlist programs (2026-11-17)
+Added **10 more official-page records** (total **20 non-sample records**, all `draft` + `pending_review`): HSF Scholar Program, Jack Kent Cooke College Scholarship, Jack Kent Cooke Undergraduate Transfer Scholarship, APIA Scholars, American Indian College Fund, UNCF (hub entry), Fulbright U.S. Student Program, NSF GRFP, SWE Society-Selected Scholarships, Knight-Hennessy Scholars.
+
+**Still not added (NOT VERIFIED)**: Pell Grant, FAFSA and the scam-warning page (studentaid.gov shows no text without JavaScript), AccessUVA (403), Stamps (server error), Posse and Dell (no award terms or dates on the pages read), National Merit (blocked), Hollings (blocked), SMART (portal not readable), Yellow Ribbon (page not found). Several of these need a browser-based read or a manual copy from the official site.
+
+**Reviewer notes**: Fulbright funds study abroad, not study at a U.S. university; UNCF is a hub entry; NSF GRFP and Knight-Hennessy deadlines were not on the pages read (shown as "See official page"); HSF, Cooke College, Fulbright and earlier-listed cycles are shown as closed. Public listings remain 0 until an administrator reviews and publishes.

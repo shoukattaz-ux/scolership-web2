@@ -165,4 +165,48 @@ export const VERIFIED_SCHOLARSHIPS: VerifiedScholarship[] = [
     reviewNotes:
       'Imported from jeffersonscholars.org/scholarships on 2026-11-16. Page mentions two undergraduate programs; only the combined description was readable. Verify details and the other program.',
   },
+  {
+    id: 'vs-004',
+    slug: 'the-gates-scholarship',
+    title: 'The Gates Scholarship',
+    universitySlug: '',
+    universityName: 'Any eligible U.S. four-year college (not tied to one school)',
+    state: 'United States',
+    stateCode: 'US',
+    category: 'need-based',
+    secondaryCategories: ['merit-based'],
+    degreeLevels: ['High School Senior', 'Undergraduate'],
+    amountDisplay: 'Last-dollar award covering remaining cost of attendance (no fixed amount)',
+    amountNumeric: 0,
+    coverageSummary:
+      'Covers the remaining eligible cost of attendance after other aid and the Student Aid Index are counted; cost of attendance can include tuition, fees, books, housing and food, and may include personal costs. Not an identical payment for every recipient.',
+    coversTuition: true,
+    coversHousing: true,
+    coversBooks: true,
+    includesStipend: false,
+    renewable: 'Not stated in the source reviewed',
+    deadlineISO: NO_DATE,
+    deadlineLabel: 'See official page',
+    overview:
+      "A scholarship for eligible U.S. high school seniors. The 2026 cycle listed an application deadline of September 15, 2026, which has passed; the next cycle's dates must be confirmed on the official page before publishing. Selection phases in that cycle ran from December 2026 through April 2027.",
+    eligibility: [
+      'High school senior in the relevant graduating class.',
+      'U.S. citizen or permanent resident.',
+      'Eligible for the federal Pell Grant.',
+      'Minimum cumulative weighted GPA of 3.3 on a 4.0 scale (or equivalent) and good academic standing.',
+      'Plans to enroll full-time in a four-year degree program at an accredited, not-for-profit U.S. college or university.',
+    ],
+    requiredDocuments: [
+      'FAFSA (required for applying)',
+      'The source reviewed gives no complete upload list; the live application portal and instructions sent to applicants decide what must be submitted.',
+    ],
+    applicationSteps: [
+      'Check the official eligibility requirements first.',
+      'Create a profile in the official application portal when the next cycle opens.',
+      'Complete the application sections and the FAFSA, then submit before the posted deadline.',
+    ],
+    officialUrl: 'https://www.thegatesscholarship.org/scholarship/',
+    reviewNotes:
+      'Source: a guide supplied by the site owner (dated 2026-11-21) that says it was prepared from thegatesscholarship.org. NOT independently fetched from the official site (host unreachable in this environment). Reviewer must verify every field on the official pages, especially GPA, deadlines and next-cycle dates.',
+  },
 ];

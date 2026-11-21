@@ -82,3 +82,8 @@ Three records were added from official pages only (`src/data/verified-scholarshi
 **Not attempted** (hosts outside the allowed list, rows 6–15, 17–28 of `docs/scholarship-shortlist.md`). Rows 29–30 are reference pages, not scholarships.
 
 Checks: server run on a temp DB, 3 records appear in `/api/admin/overview` as draft/pending_review, count stays 3 after restart; `npx tsc --noEmit` passes.
+
+### 8a. Update (2026-11-21): The Gates Scholarship added from an owner-supplied guide
+`vs-004` (draft / pending_review) was built from a guide document supplied by the site owner, which states it was prepared from thegatesscholarship.org. **It was not fetched from the official site** (that host is unreachable from this environment), so it is weaker evidence than records 1-3. Only the guide's official-eligibility, award and timeline facts were used; its country-specific advice and its self-described "practical preparation" checklist were left out. The 2026 deadline (September 15, 2026) has passed, so the record uses "See official page". A reviewer must verify every field on the official pages before it is marked Reviewed.
+
+Still not added: QuestBridge, Jack Kent Cooke, Posse, National Merit, Robertson Scholars, Pell Grant, FAFSA, AccessUVA (fetch tool could not reach them; see section 8).

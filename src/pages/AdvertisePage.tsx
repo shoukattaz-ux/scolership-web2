@@ -16,6 +16,13 @@ export function AdvertisePage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (import.meta.env.VITE_STATIC === '1') {
+      const to = settings.general.contactEmail;
+      if (!to) { setStatus({ type: 'error', text: 'No contact email is configured for this site yet.' }); return; }
+      window.location.href = `mailto:${to}?subject=${encodeURIComponent('Advertising / Sponsorship Inquiry')}&body=${encodeURIComponent(`${message}\n\n${name} <${email}>`)}`;
+      setStatus({ type: 'success', text: 'Your email app should open with the message ready to send.' });
+      return;
+    }
     setStatus({ type: 'loading', text: '' });
     try {
       const res = await fetch('/api/contact', {

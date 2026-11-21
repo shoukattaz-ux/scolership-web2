@@ -63,8 +63,8 @@ export default function App() {
             <Route path="/editorial-policy" element={<EditorialPolicyPage />} />
             <Route path="/cookie-policy" element={<CookiePolicyPage />} />
             <Route path="/sitemap" element={<HtmlSitemapPage />} />
-            <Route path="/admin/login" element={<AdminLoginPage />} />
-            <Route path="/admin" element={<AdminDashboardPage />} />
+            {import.meta.env.VITE_STATIC !== '1' && <Route path="/admin/login" element={<AdminLoginPage />} />}
+            {import.meta.env.VITE_STATIC !== '1' && <Route path="/admin" element={<AdminDashboardPage />} />}
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
           </Suspense>

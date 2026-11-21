@@ -264,7 +264,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const refreshSiteData = useCallback(async () => {
     try {
-      const res = await fetch('/api/bootstrap');
+      const res = await fetch(import.meta.env.VITE_STATIC === '1' ? '/site-data.json' : '/api/bootstrap');
       if (!res.ok) return;
       const data = await res.json();
       if (Array.isArray(data.categories) && data.categories.length) setCategories(data.categories);
@@ -282,6 +282,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const refreshAuth = useCallback(async () => {
+    if (import.meta.env.VITE_STATIC === '1') { setAuthLoading(false); return; }
     try {
       const res = await fetch('/api/auth/me');
       if (res.ok) {

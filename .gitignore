@@ -11,3 +11,4 @@ coverage/
 data/*.db
 data/*.db-shm
 data/*.db-wal
+public/site-data.json

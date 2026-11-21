@@ -83,7 +83,24 @@ Three records were added from official pages only (`src/data/verified-scholarshi
 
 Checks: server run on a temp DB, 3 records appear in `/api/admin/overview` as draft/pending_review, count stays 3 after restart; `npx tsc --noEmit` passes.
 
-### 8a. Update (2026-11-21): The Gates Scholarship added from an owner-supplied guide
-`vs-004` (draft / pending_review) was built from a guide document supplied by the site owner, which states it was prepared from thegatesscholarship.org. **It was not fetched from the official site** (that host is unreachable from this environment), so it is weaker evidence than records 1-3. Only the guide's official-eligibility, award and timeline facts were used; its country-specific advice and its self-described "practical preparation" checklist were left out. The 2026 deadline (September 15, 2026) has passed, so the record uses "See official page". A reviewer must verify every field on the official pages before it is marked Reviewed.
+## 9. Update: more official-page scholarship records (2026-11-17)
+After network access was widened, I read the official pages directly and added **7 more records** (total **10** non-sample records), all `draft` + `pending_review`, `is_sample_data = 0`, each linking to its official page with the reading date in the reviewer notes:
+The Gates Scholarship, QuestBridge National College Match, Coca-Cola Scholars Program, Robertson Scholars Leadership Program, Barry Goldwater Scholarship, Post-9/11 GI Bill, Horatio Alger National Scholarship. (Earlier: Morehead-Cain, Carolina Covenant, Jefferson Scholars.)
 
-Still not added: QuestBridge, Jack Kent Cooke, Posse, National Merit, Robertson Scholars, Pell Grant, FAFSA, AccessUVA (fetch tool could not reach them; see section 8).
+**Not added (NOT VERIFIED)**: Federal Pell Grant and FAFSA (studentaid.gov renders with JavaScript, so no text could be read; ed.gov blocked the request), AccessUVA (403), Stamps (server error), Posse and Dell (only general pages readable; no award terms or deadlines found), NSF GRFP (site unreachable), Knight-Hennessy (page moved), SMART (portal not readable), Yellow Ribbon (page not found), National Merit (blocked). Not attempted: Hispanic Scholarship Fund, Jack Kent Cooke, UNCF, APIA Scholars, American Indian College Fund, Fulbright, Hollings, SWE.
+
+**Caveats a reviewer must check before publishing**: several dates are for cycles that already closed (Gates, QuestBridge, Coca-Cola, Robertson) and are shown as such; Gates shows "Status: Open" beside a past deadline; Goldwater's deadline is a rule ("last Friday in January") converted to 2027-01-29; Horatio Alger windows have no year; Morehead-Cain, Carolina Covenant, GI Bill and Horatio Alger show "See official page" instead of a dated deadline.
+
+**Display fixes made for this data**: no fake "days remaining" for undated deadlines, no "0.00 GPA" when none is stated, no empty Fields of Study block, no broken university link for national programs, "Visit Official Page" button text.
+
+**Status: the public site still shows 0 listings** because drafts are not public. An administrator must review each record against its official page, mark it Reviewed, then publish it (Admin → Scholarships).
+
+## 10. Update: remaining shortlist programs (2026-11-17)
+Added **10 more official-page records** (total **20 non-sample records**, all `draft` + `pending_review`): HSF Scholar Program, Jack Kent Cooke College Scholarship, Jack Kent Cooke Undergraduate Transfer Scholarship, APIA Scholars, American Indian College Fund, UNCF (hub entry), Fulbright U.S. Student Program, NSF GRFP, SWE Society-Selected Scholarships, Knight-Hennessy Scholars.
+
+**Still not added (NOT VERIFIED)**: Pell Grant, FAFSA and the scam-warning page (studentaid.gov shows no text without JavaScript), AccessUVA (403), Stamps (server error), Posse and Dell (no award terms or dates on the pages read), National Merit (blocked), Hollings (blocked), SMART (portal not readable), Yellow Ribbon (page not found). Several of these need a browser-based read or a manual copy from the official site.
+
+**Reviewer notes**: Fulbright funds study abroad, not study at a U.S. university; UNCF is a hub entry; NSF GRFP and Knight-Hennessy deadlines were not on the pages read (shown as "See official page"); HSF, Cooke College, Fulbright and earlier-listed cycles are shown as closed. Public listings remain 0 until an administrator reviews and publishes.
+
+### 10a. Cross-check (2026-11-21)
+The owner-supplied Gates Scholarship guide (dated 2026-11-21) was compared with record `vs-004` (read from the official site on 2026-11-17). Eligibility (Pell-eligible, U.S. citizen/permanent resident, 3.3 weighted GPA, full-time at a four-year U.S. college), last-dollar coverage and the 2026 timeline agree. The guide adds nothing that changes the record; the deadline (Sept 15, 2026) has passed, so a reviewer must still confirm the next cycle's dates on the official page.

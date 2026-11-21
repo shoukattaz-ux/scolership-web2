@@ -14,12 +14,16 @@ export function getDaysUntilDeadline(deadlineISO: string): number {
 }
 
 export function DeadlineCountdown({ deadlineISO, deadlineLabel, compact = false }: DeadlineCountdownProps) {
+  // 2099-12-31 is the placeholder for "no dated deadline stated by the sponsor": show the label only.
+  const undated = deadlineISO.startsWith('2099');
   const days = getDaysUntilDeadline(deadlineISO);
 
   let statusText = '';
   let statusColor = 'text-slate-600 dark:text-slate-300';
 
-  if (days < 0) {
+  if (undated) {
+    statusText = 'Check the official page for dates';
+  } else if (days < 0) {
     statusText = 'Cycle closed — check next window';
     statusColor = 'text-slate-500 dark:text-slate-400';
   } else if (days === 0) {

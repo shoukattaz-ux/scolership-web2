@@ -11,7 +11,7 @@ interface ScholarshipCardProps {
 }
 
 export function ScholarshipCard({ scholarship }: ScholarshipCardProps) {
-  const { isSaved, toggleSaved, isCompared, toggleCompare } = useAppContext();
+  const { isSaved, toggleSaved, isCompared, toggleCompare, universities } = useAppContext();
   const [limitNotice, setLimitNotice] = useState(false);
 
   const saved = isSaved(scholarship.id);
@@ -78,12 +78,16 @@ export function ScholarshipCard({ scholarship }: ScholarshipCardProps) {
         </h3>
 
         <p className="text-sm text-slate-600 dark:text-slate-300 mb-3">
-          <Link
-            to={`/university/${scholarship.universitySlug}`}
-            className="font-medium hover:underline underline-offset-4"
-          >
-            {scholarship.universityName}
-          </Link>
+          {universities.some((u) => u.slug === scholarship.universitySlug) ? (
+            <Link
+              to={`/university/${scholarship.universitySlug}`}
+              className="font-medium hover:underline underline-offset-4"
+            >
+              {scholarship.universityName}
+            </Link>
+          ) : (
+            <span className="font-medium">{scholarship.universityName}</span>
+          )}
           <span aria-hidden="true"> · </span>
           <span>{scholarship.state}</span>
         </p>
@@ -105,8 +109,12 @@ export function ScholarshipCard({ scholarship }: ScholarshipCardProps) {
             deadlineLabel={scholarship.deadlineLabel}
             compact
           />
-          <span aria-hidden="true">·</span>
-          <span>Min GPA {scholarship.gpaMin.toFixed(1)}</span>
+          {scholarship.gpaMin > 0 && (
+            <>
+              <span aria-hidden="true">·</span>
+              <span>Min GPA {scholarship.gpaMin.toFixed(1)}</span>
+            </>
+          )}
         </div>
 
         <Link
